@@ -4,21 +4,36 @@
 		<title>ZNC Configuration</title>
 		<link rel="stylesheet" href="/static/style.css" />
 		<script src="/static/get_ip_network.js"></script>
+		{{ if .HaveNetwork -}}
 		<script src="/static/offer_iframe.js"></script>
+		{{- end }}
 	</head>
 	<body>
-		<h1>ZNC Configuration</h1>
+		<h1>IRC Server</h1>
 		<form method="post" action="/config">
 			<div>
-				<label for="irc-server">IRC Server:</label>
-				<input name="irc-server" id="irc-server" value="{{ .Host }}" />
+				<label for="irc-server">Server:</label>
+				<input name="irc-server" id="irc-server" value="{{ .Server.Host }}" />
 			</div>
 			<div>
 				<label for="port">Port:</label>
-				<input name="port" id="port" value="{{ .Port }}" />
+				<input name="port" id="port" value="{{ .Server.Port }}" />
 			</div>
 			<button type="submit">Apply</button>
 		</form>
+		{{ if .HaveNetwork -}}
 		<iframe id="offer-iframe"></iframe>
+		{{- end }}
+		<h1>Connecting</h1>
+
+		{{ if .HaveNetwork -}}
+		<p>ZNC has access to the internet. If for some reason this isn't
+		working, you can try re-requesting it:</p>
+		{{ else -}}
+
+		<p>ZNC does not currently have access to the internet; you will not
+		be able to connect to the IRC network until this has been obtained.</p>
+		{{ end -}}
+		<button id="request_cap">Request Network Access</button>
 	</body>
 </html>

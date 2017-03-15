@@ -21,6 +21,11 @@ var (
 	templates = template.Must(template.ParseGlob(appDir + "/templates/*"))
 )
 
+type Status struct {
+	HaveNetwork bool
+	Server      ServerConfig
+}
+
 func webui(ctx context.Context,
 	netCaps chan<- *ip_capnp.IpNetwork,
 	serverConfigs chan<- *ServerConfig,
@@ -39,7 +44,11 @@ func webui(ctx context.Context,
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		templates.Lookup("index.html").Execute(w, <-config.get)
+		serverConfig := <-config.get
+		templates.Lookup("index.html").Execute(w, Status{
+			HaveNetwork: true,
+			Server:      *serverConfig,
+		})
 	})
 
 	// Update the config:
