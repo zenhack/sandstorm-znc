@@ -42,6 +42,7 @@ func webui(ctx context.Context,
 		templates.Lookup("index.html").Execute(w, <-config.get)
 	})
 
+	// Update the config:
 	mux.HandleFunc("/config", func(w http.ResponseWriter, req *http.Request) {
 		if req.Method != "POST" {
 			badReq(w)
@@ -66,6 +67,7 @@ func webui(ctx context.Context,
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 	})
 
+	// Websocket connection, to be forwarded to ZNC:
 	mux.Handle("/connect", websocket.Handler(func(wsConn *websocket.Conn) {
 		zncConn, err := net.Dial("tcp", zncAddr)
 		if err != nil {
@@ -76,6 +78,8 @@ func webui(ctx context.Context,
 		copyClose(zncConn, wsConn)
 	}))
 
+	// An IpNetwork capability; send it off to the backend so it can access
+	// the internet:
 	mux.HandleFunc("/ip-network-cap", func(w http.ResponseWriter, req *http.Request) {
 		buf, err := ioutil.ReadAll(io.LimitReader(req.Body, 512))
 		if err != nil {
