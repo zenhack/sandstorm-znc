@@ -30,9 +30,8 @@ func main() {
 
 	netCaps := make(chan *ip_capnp.IpNetwork)
 	configs := make(chan *ServerConfig)
-	conns := make(chan net.Conn)
 
-	go ipNetworkProxy(ctx, netCaps, configs, conns)
+	go ipNetworkProxy(ctx, netCaps, configs)
 
 	writeConfig(&ZncConfig{
 		ListenPort: zncPort,
