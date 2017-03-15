@@ -16,6 +16,7 @@ func copyClose(a, b net.Conn) {
 	oneWay := func(dst, src net.Conn) {
 		io.Copy(dst, src)
 		dst.Close()
+		done <- struct{}{}
 	}
 	go oneWay(a, b)
 	go oneWay(b, a)
