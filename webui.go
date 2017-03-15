@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"golang.org/x/net/websocket"
+	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
@@ -15,11 +16,19 @@ import (
 	"zombiezen.com/go/capnproto2"
 )
 
+var (
+	templates = template.Must(template.ParseGlob(appDir + "/templates/*"))
+)
+
 func webui(ctx context.Context,
 	netCaps chan<- *ip_capnp.IpNetwork,
 	serverConfigs chan<- *ServerConfig) websession.HandlerWebSession {
 
 	mux := http.NewServeMux()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		templates.Lookup("index.html").Execute(w, struct{}{})
+	})
 
 	mux.Handle("/connect", websocket.Handler(func(wsConn *websocket.Conn) {
 		zncConn, err := net.Dial("tcp", zncAddr)
@@ -30,10 +39,6 @@ func webui(ctx context.Context,
 		}
 		copyClose(zncConn, wsConn)
 	}))
-
-	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		w.Write([]byte("Hello!"))
-	})
 
 	mux.HandleFunc("/ip-network-cap", func(w http.ResponseWriter, req *http.Request) {
 		badReq := func() {
@@ -59,6 +64,8 @@ func webui(ctx context.Context,
 		}
 		netCaps <- &ip_capnp.IpNetwork{capnp.ToInterface(cap).Client()}
 	})
+
+	mux.Handle("/static/", http.FileServer(http.Dir(appDir)))
 
 	return websession.FromHandler(ctx, mux)
 }

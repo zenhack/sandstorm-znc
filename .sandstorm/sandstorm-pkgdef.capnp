@@ -245,6 +245,7 @@ const myCommand :Spk.Manifest.Command = (
 
     (key = "SANDSTORM_ZNC_PORT", value = "8000"),
     (key = "SANDSTORM_IP_NETWORK_PORT", value = "6667"),
+    (key = "SANDSTORM_APP_DIR", value = "/opt/app"),
   ]
 );
 
