@@ -45,6 +45,8 @@ func main() {
 	conns := make(chan net.Conn)
 
 	go ipNetworkProxy(ctx, netCaps, configs, conns)
+
+	writeConfig(&ZncConfig{})
 	startZnc()
 
 	api, err := grain.ConnectAPI(ctx, webui(ctx, netCaps, configs))
