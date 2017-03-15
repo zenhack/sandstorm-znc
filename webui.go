@@ -31,15 +31,15 @@ func webui(ctx context.Context,
 		w.Write([]byte("Bad Request"))
 	}
 
-	config := configCell{value: &ServerConfig{
+	config := newConfigProc(ctx, &ServerConfig{
 		Host: "irc.freenode.net",
 		Port: 6667,
-	}}
+	}, serverConfigs)
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		templates.Lookup("index.html").Execute(w, config.Get())
+		templates.Lookup("index.html").Execute(w, <-config.get)
 	})
 
 	mux.HandleFunc("/config", func(w http.ResponseWriter, req *http.Request) {
@@ -59,10 +59,10 @@ func webui(ctx context.Context,
 			w.Write([]byte("Port must be non-zero."))
 			return
 		}
-		config.Set(&ServerConfig{
+		config.set <- &ServerConfig{
 			Host: req.FormValue("irc-server"),
 			Port: uint16(port),
-		})
+		}
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 	})
 

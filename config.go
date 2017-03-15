@@ -1,9 +1,9 @@
 package main
 
 import (
+	"context"
 	"net"
 	"os"
-	"sync"
 )
 
 const (
@@ -26,20 +26,29 @@ type ServerConfig struct {
 	TLS  bool   // Whether to connect via TLS
 }
 
-// Atomic cell for the current ServerConfig.
-type configCell struct {
-	sync.RWMutex
-	value *ServerConfig
+type configProc struct {
+	get <-chan *ServerConfig
+	set chan<- *ServerConfig
 }
 
-func (c *configCell) Get() *ServerConfig {
-	c.RLock()
-	defer c.RUnlock()
-	return c.value
-}
-
-func (c *configCell) Set(cfg *ServerConfig) {
-	c.Lock()
-	defer c.Unlock()
-	c.value = cfg
+func newConfigProc(
+	ctx context.Context,
+	init *ServerConfig,
+	notify chan<- *ServerConfig,
+) *configProc {
+	get := make(chan *ServerConfig)
+	set := make(chan *ServerConfig)
+	go func() {
+		current := init
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case get <- current:
+			case current = <-set:
+				notify <- current
+			}
+		}
+	}()
+	return &configProc{get: get, set: set}
 }
