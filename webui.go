@@ -53,7 +53,7 @@ func webui(ctx context.Context,
 
 		sessionCtx := w.(grain.HasSessionContext).GetSessionContext()
 		cap, err := sessionCtx.ClaimRequest(
-			context.TODO(),
+			ctx,
 			func(p grain_capnp.SessionContext_claimRequest_Params) error {
 				p.SetRequestToken(string(buf))
 				return nil
