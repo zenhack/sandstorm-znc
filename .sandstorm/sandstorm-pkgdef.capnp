@@ -238,12 +238,13 @@ const myCommand :Spk.Manifest.Command = (
   argv = ["/opt/app/app"],
   environ = [
     # Note that this defines the *entire* environment seen by your app.
-    (key = "HOME", value = "/var"),
     (key = "PATH", value = "/usr/local/bin:/usr/bin:/bin"),
-    (key = "SANDSTORM", value = "1"),
-    # Export SANDSTORM=1 into the environment, so that apps running within Sandstorm
-    # can detect if $SANDSTORM="1" at runtime, switching UI and/or backend to use
-    # the app's Sandstorm-specific integration code.
+
+    # ZNC looks in $HOME for it's configuration.
+    (key = "HOME", value = "/var"),
+
+    (key = "SANDSTORM_ZNC_PORT", value = "8000"),
+    (key = "SANDSTORM_IP_NETWORK_PORT", value = "6667"),
   ]
 );
 

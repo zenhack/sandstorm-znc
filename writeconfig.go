@@ -13,6 +13,7 @@ var (
 )
 
 type ZncConfig struct {
+	ListenPort, DialPort string
 }
 
 func writeConfig(cfg *ZncConfig) {

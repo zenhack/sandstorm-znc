@@ -10,11 +10,6 @@ import (
 	"zenhack.net/go/sandstorm/grain"
 )
 
-const (
-	zncAddr       = "127.0.0.1:8000"
-	ipNetworkAddr = "127.0.0.1:6667"
-)
-
 // A ServerConfig specifies a server to connect to.
 type ServerConfig struct {
 	Host string // Hostname of the server
@@ -46,7 +41,11 @@ func main() {
 
 	go ipNetworkProxy(ctx, netCaps, configs, conns)
 
-	writeConfig(&ZncConfig{})
+	writeConfig(&ZncConfig{
+		ListenPort: zncPort,
+		DialPort:   ipNetworkPort,
+	})
+
 	startZnc()
 
 	api, err := grain.ConnectAPI(ctx, webui(ctx, netCaps, configs))
