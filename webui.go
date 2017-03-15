@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"strconv"
 	grain_capnp "zenhack.net/go/sandstorm/capnp/grain"
 	ip_capnp "zenhack.net/go/sandstorm/capnp/ip"
 	"zenhack.net/go/sandstorm/grain"
@@ -25,6 +26,11 @@ func webui(ctx context.Context,
 	serverConfigs chan<- *ServerConfig,
 ) websession.HandlerWebSession {
 
+	badReq := func(w http.ResponseWriter) {
+		w.WriteHeader(400)
+		w.Write([]byte("Bad Request"))
+	}
+
 	config := configCell{value: &ServerConfig{
 		Host: "irc.freenode.net",
 		Port: 6667,
@@ -34,6 +40,30 @@ func webui(ctx context.Context,
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		templates.Lookup("index.html").Execute(w, config.Get())
+	})
+
+	mux.HandleFunc("/config", func(w http.ResponseWriter, req *http.Request) {
+		if req.Method != "POST" {
+			badReq(w)
+			return
+		}
+
+		port, err := strconv.ParseUint(req.FormValue("port"), 10, 16)
+		if err != nil {
+			w.WriteHeader(400)
+			w.Write([]byte(err.Error()))
+			return
+		}
+		if port == 0 {
+			w.WriteHeader(400)
+			w.Write([]byte("Port must be non-zero."))
+			return
+		}
+		config.Set(&ServerConfig{
+			Host: req.FormValue("irc-server"),
+			Port: uint16(port),
+		})
+		http.Redirect(w, req, "/", http.StatusSeeOther)
 	})
 
 	mux.Handle("/connect", websocket.Handler(func(wsConn *websocket.Conn) {
@@ -47,13 +77,9 @@ func webui(ctx context.Context,
 	}))
 
 	mux.HandleFunc("/ip-network-cap", func(w http.ResponseWriter, req *http.Request) {
-		badReq := func() {
-			w.WriteHeader(400)
-			w.Write([]byte("Bad Request"))
-		}
 		buf, err := ioutil.ReadAll(io.LimitReader(req.Body, 512))
 		if err != nil {
-			badReq()
+			badReq(w)
 			return
 		}
 
@@ -65,7 +91,7 @@ func webui(ctx context.Context,
 				return nil
 			}).Cap().Struct()
 		if err != nil {
-			badReq()
+			badReq(w)
 			return
 		}
 		netCaps <- &ip_capnp.IpNetwork{capnp.ToInterface(cap).Client()}
