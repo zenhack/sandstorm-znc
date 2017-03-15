@@ -88,14 +88,19 @@ func webui(ctx context.Context,
 		}
 
 		sessionCtx := w.(grain.HasSessionContext).GetSessionContext()
-		cap, err := sessionCtx.ClaimRequest(
+		results, err := sessionCtx.ClaimRequest(
 			ctx,
 			func(p grain_capnp.SessionContext_claimRequest_Params) error {
 				p.SetRequestToken(string(buf))
 				return nil
-			}).Cap().Struct()
+			}).Struct()
 		if err != nil {
 			badReq(w)
+			return
+		}
+		cap, err := results.Cap()
+		if err != nil {
+			log.Printf("error claiming network cap: %v", err)
 			return
 		}
 		netCaps <- &ip_capnp.IpNetwork{capnp.ToInterface(cap).Client()}
