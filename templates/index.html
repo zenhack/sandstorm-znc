@@ -1,14 +1,23 @@
 <!doctype html>
 <html>
 	<head>
-		<title>ZNC</title>
+		<title>ZNC Configuration</title>
 		<link rel="stylesheet" href="/static/style.css" />
 		<script src="/static/get_ip_network.js"></script>
 		<script src="/static/offer_iframe.js"></script>
 	</head>
 	<body>
-		<h1>ZNC</h1>
+		<h1>ZNC Configuration</h1>
 		<form method="post" action="/config">
+			<div>
+				<label for="irc-server">IRC Server:</label>
+				<input name="irc-server" id="irc-server" value="{{ .Host }}" />
+			</div>
+			<div>
+				<label for="port">Port:</label>
+				<input name="port" id="port" value="{{ .Port }}" />
+			</div>
+			<button type="submit">Apply</button>
 		</form>
 		<iframe id="offer-iframe"></iframe>
 	</body>

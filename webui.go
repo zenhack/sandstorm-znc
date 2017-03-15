@@ -22,12 +22,18 @@ var (
 
 func webui(ctx context.Context,
 	netCaps chan<- *ip_capnp.IpNetwork,
-	serverConfigs chan<- *ServerConfig) websession.HandlerWebSession {
+	serverConfigs chan<- *ServerConfig,
+) websession.HandlerWebSession {
+
+	config := configCell{value: &ServerConfig{
+		Host: "irc.freenode.net",
+		Port: 6667,
+	}}
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		templates.Lookup("index.html").Execute(w, struct{}{})
+		templates.Lookup("index.html").Execute(w, config.Get())
 	})
 
 	mux.Handle("/connect", websocket.Handler(func(wsConn *websocket.Conn) {

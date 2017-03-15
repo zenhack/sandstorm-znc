@@ -54,6 +54,7 @@ opt/app
 opt/app/app
 opt/app/static/get_ip_network.js
 opt/app/static/offer_iframe.js
+opt/app/static/style.css
 opt/app/templates
 opt/app/templates/index.html
 opt/app/znc.conf

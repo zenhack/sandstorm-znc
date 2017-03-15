@@ -10,13 +10,6 @@ import (
 	"zenhack.net/go/sandstorm/grain"
 )
 
-// A ServerConfig specifies a server to connect to.
-type ServerConfig struct {
-	Host string // Hostname of the server
-	Port uint16 // TCP port number
-	TLS  bool   // Whether to connect via TLS
-}
-
 func startZnc() {
 	chkfatal(exec.Command("znc", "-f").Start())
 
