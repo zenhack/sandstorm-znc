@@ -20,15 +20,6 @@ func ipNetworkProxy(
 		cap    *ip_capnp.IpNetwork
 	)
 
-	for config == nil || cap == nil {
-		select {
-		case config = <-configs:
-			cap = <-netCaps
-		case cap = <-netCaps:
-			config = <-configs
-		}
-	}
-
 	conns := make(chan net.Conn)
 	go ipNetworkListener(conns)
 
@@ -38,6 +29,17 @@ func ipNetworkProxy(
 		case config = <-configs:
 		case cap = <-netCaps:
 		case zncConn := <-conns:
+			if config == nil {
+				log.Print("IpNetwork Proxy got a connection " +
+					"from ZNC, but we don't have our config yet.")
+				zncConn.Close()
+				continue
+			}
+			if cap == nil {
+				log.Print("IpNetwork Proxy got a connection " +
+					"from ZNC, but we don't have internet access yet.")
+				zncConn.Close()
+			}
 			log.Printf("Got connection from znc")
 			dialer := &ip.IpNetworkDialer{
 				Ctx:       ctx,
