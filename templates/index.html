@@ -13,11 +13,27 @@
 		<form method="post" action="/config">
 			<div>
 				<label for="irc-server">Server:</label>
-				<input name="irc-server" id="irc-server" value="{{ .Server.Host }}" />
+				<input
+						name="irc-server"
+						id="irc-server"
+						{{ if .Server -}}
+						value="{{ .Server.Host }}"
+						{{- else -}}
+						placeholder="e.g. irc.freenode.net"
+						{{- end }}
+					/>
 			</div>
 			<div>
 				<label for="port">Port:</label>
-				<input name="port" id="port" value="{{ .Server.Port }}" />
+				<input
+					name="port"
+					id="port"
+					{{ if .Server -}}
+					value="{{ .Server.Port }}"
+					{{- else -}}
+					placeholder="e.g. 6667"
+					{{- end }}
+				/>
 			</div>
 			<button type="submit">Apply</button>
 		</form>

@@ -23,7 +23,7 @@ var (
 
 type Status struct {
 	HaveNetwork bool
-	Server      ServerConfig
+	Server      *ServerConfig
 }
 
 func webui(ctx context.Context,
@@ -36,10 +36,7 @@ func webui(ctx context.Context,
 		w.Write([]byte("Bad Request"))
 	}
 
-	config := newConfigProc(ctx, &ServerConfig{
-		Host: "irc.freenode.net",
-		Port: 6667,
-	}, serverConfigs)
+	config := newConfigProc(ctx, nil, serverConfigs)
 
 	mux := http.NewServeMux()
 
@@ -47,7 +44,7 @@ func webui(ctx context.Context,
 		serverConfig := <-config.get
 		templates.Lookup("index.html").Execute(w, Status{
 			HaveNetwork: true,
-			Server:      *serverConfig,
+			Server:      serverConfig,
 		})
 	})
 
