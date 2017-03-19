@@ -12,7 +12,7 @@ import (
 	"zenhack.net/go/sandstorm/ip"
 )
 
-// Start the ZNC daemon, and wait until it starts accepting connection
+// Start the ZNC daemon, and wait until it starts accepting connections
 // before returning.
 func startZnc() {
 	cmd := exec.Command("znc", "-f")
