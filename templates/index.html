@@ -35,6 +35,15 @@
 					{{- end }}
 				/>
 			</div>
+			<div>
+				<label for="tls">Use TLS?</label>
+				<input
+					type="checkbox"
+					id="tls"
+					name="tls"
+					{{- if .Server }}{{ if .Server.TLS }}checked="checked"{{ end }}{{ end }}
+				/>
+			</div>
 			<button type="submit">Apply</button>
 		</form>
 		{{ if .HaveNetwork -}}

@@ -72,9 +72,13 @@ func ipNetworkProxy(
 		case cap = <-netCaps:
 		case zncConn := <-conns:
 			log.Printf("Got connection from znc")
-			dialer := &ip.IpNetworkDialer{
+			var dialer Dialer
+			dialer = &ip.IpNetworkDialer{
 				Ctx:       ctx,
 				IpNetwork: *cap,
+			}
+			if config.TLS {
+				dialer = &TLSDialer{Base: dialer}
 			}
 			serverConn, err := dialer.Dial(
 				"tcp",

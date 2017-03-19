@@ -73,6 +73,7 @@ func webui(ctx context.Context,
 		coord.setConfig <- &ServerConfig{
 			Host: req.FormValue("irc-server"),
 			Port: uint16(port),
+			TLS:  req.FormValue("tls") == "on",
 		}
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 	})
