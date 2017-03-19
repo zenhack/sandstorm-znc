@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net"
+	"os"
 	"os/exec"
 	"strconv"
 	"time"
@@ -12,7 +13,11 @@ import (
 )
 
 func startZnc() {
-	chkfatal(exec.Command("znc", "-f").Start())
+	cmd := exec.Command("znc", "-f")
+	// Attach these so the sandstorm console shows output from ZNC.
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	chkfatal(cmd.Start())
 
 	log.Println("Waiting for ZNC to start...")
 	for {
