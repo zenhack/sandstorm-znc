@@ -4,10 +4,27 @@ import (
 	"context"
 	"log"
 	"net"
+	"os/exec"
 	"strconv"
+	"time"
 	ip_capnp "zenhack.net/go/sandstorm/capnp/ip"
 	"zenhack.net/go/sandstorm/ip"
 )
+
+func startZnc() {
+	chkfatal(exec.Command("znc", "-f").Start())
+
+	log.Println("Waiting for ZNC to start...")
+	for {
+		conn, err := net.Dial("tcp", zncAddr)
+		if err == nil {
+			conn.Close()
+			break
+		}
+		time.Sleep(time.Second / 10)
+	}
+	log.Println("ZNC is up.")
+}
 
 func ipNetworkProxy(
 	ctx context.Context,
@@ -20,26 +37,23 @@ func ipNetworkProxy(
 		cap    *ip_capnp.IpNetwork
 	)
 
+	for cap == nil || config == nil {
+		select {
+		case cap = <-netCaps:
+		case config = <-configs:
+		}
+	}
+
 	conns := make(chan net.Conn)
 	go ipNetworkListener(conns)
 
+	startZnc()
+
 	for {
-		log.Printf("Config: %v, Cap: %v", config, cap)
 		select {
 		case config = <-configs:
 		case cap = <-netCaps:
 		case zncConn := <-conns:
-			if config == nil {
-				log.Print("IpNetwork Proxy got a connection " +
-					"from ZNC, but we don't have our config yet.")
-				zncConn.Close()
-				continue
-			}
-			if cap == nil {
-				log.Print("IpNetwork Proxy got a connection " +
-					"from ZNC, but we don't have internet access yet.")
-				zncConn.Close()
-			}
 			log.Printf("Got connection from znc")
 			dialer := &ip.IpNetworkDialer{
 				Ctx:       ctx,

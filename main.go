@@ -2,28 +2,9 @@ package main
 
 import (
 	"context"
-	"log"
-	"net"
-	"os/exec"
-	"time"
 	ip_capnp "zenhack.net/go/sandstorm/capnp/ip"
 	"zenhack.net/go/sandstorm/grain"
 )
-
-func startZnc() {
-	chkfatal(exec.Command("znc", "-f").Start())
-
-	log.Println("Waiting for ZNC to start...")
-	for {
-		conn, err := net.Dial("tcp", zncAddr)
-		if err == nil {
-			conn.Close()
-			break
-		}
-		time.Sleep(time.Second / 10)
-	}
-	log.Println("ZNC is up.")
-}
 
 func main() {
 	ctx := context.Background()
@@ -37,8 +18,6 @@ func main() {
 		ListenPort: zncPort,
 		DialPort:   ipNetworkPort,
 	})
-
-	startZnc()
 
 	api, err := grain.ConnectAPI(ctx, webui(ctx, netCaps, configs))
 	chkfatal(err)
