@@ -38,6 +38,7 @@
 			<button type="submit">Apply</button>
 		</form>
 		{{ if .HaveNetwork -}}
+		<p>You can connect to ZNC via this websocket:</p>
 		<iframe id="offer-iframe"></iframe>
 		{{- end }}
 		<h1>Connecting</h1>
