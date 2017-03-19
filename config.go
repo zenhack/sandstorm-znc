@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"os"
+	ip_capnp "zenhack.net/go/sandstorm/capnp/ip"
 )
 
 const (
@@ -26,29 +27,45 @@ type ServerConfig struct {
 	TLS  bool   // Whether to connect via TLS
 }
 
-type configProc struct {
-	get <-chan *ServerConfig
-	set chan<- *ServerConfig
+type coordChans struct {
+	getConfig  <-chan *ServerConfig
+	setConfig  chan<- *ServerConfig
+	getNetwork <-chan *ip_capnp.IpNetwork
+	setNetwork chan<- *ip_capnp.IpNetwork
 }
 
-func newConfigProc(
+func startCoordinator(
 	ctx context.Context,
-	init *ServerConfig,
-	notify chan<- *ServerConfig,
-) *configProc {
-	get := make(chan *ServerConfig)
-	set := make(chan *ServerConfig)
+	notifyConfig chan<- *ServerConfig,
+	notifyNetwork chan<- *ip_capnp.IpNetwork,
+) coordChans {
+
+	getConfig := make(chan *ServerConfig)
+	setConfig := make(chan *ServerConfig)
+	getNetwork := make(chan *ip_capnp.IpNetwork)
+	setNetwork := make(chan *ip_capnp.IpNetwork)
+
 	go func() {
-		current := init
+		var (
+			config  *ServerConfig
+			network *ip_capnp.IpNetwork
+		)
 		for {
 			select {
-			case <-ctx.Done():
-				return
-			case get <- current:
-			case current = <-set:
-				notify <- current
+			case getConfig <- config:
+			case getNetwork <- network:
+			case network = <-setNetwork:
+				notifyNetwork <- network
+			case config = <-setConfig:
+				notifyConfig <- config
 			}
 		}
 	}()
-	return &configProc{get: get, set: set}
+
+	return coordChans{
+		getConfig:  getConfig,
+		setConfig:  setConfig,
+		getNetwork: getNetwork,
+		setNetwork: setNetwork,
+	}
 }

@@ -36,15 +36,14 @@ func webui(ctx context.Context,
 		w.Write([]byte("Bad Request"))
 	}
 
-	config := newConfigProc(ctx, nil, serverConfigs)
+	coord := startCoordinator(ctx, serverConfigs, netCaps)
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		serverConfig := <-config.get
 		templates.Lookup("index.html").Execute(w, Status{
-			HaveNetwork: true,
-			Server:      serverConfig,
+			HaveNetwork: <-coord.getNetwork != nil,
+			Server:      <-coord.getConfig,
 		})
 	})
 
@@ -66,7 +65,7 @@ func webui(ctx context.Context,
 			w.Write([]byte("Port must be non-zero."))
 			return
 		}
-		config.set <- &ServerConfig{
+		coord.setConfig <- &ServerConfig{
 			Host: req.FormValue("irc-server"),
 			Port: uint16(port),
 		}
@@ -109,7 +108,7 @@ func webui(ctx context.Context,
 			log.Printf("error claiming network cap: %v", err)
 			return
 		}
-		netCaps <- &ip_capnp.IpNetwork{capnp.ToInterface(cap).Client()}
+		coord.setNetwork <- &ip_capnp.IpNetwork{capnp.ToInterface(cap).Client()}
 	})
 
 	mux.Handle("/static/", http.FileServer(http.Dir(appDir)))
