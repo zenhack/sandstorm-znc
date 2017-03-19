@@ -12,6 +12,8 @@ import (
 	"zenhack.net/go/sandstorm/ip"
 )
 
+// Start the ZNC daemon, and wait until it starts accepting connection
+// before returning.
 func startZnc() {
 	cmd := exec.Command("znc", "-f")
 	// Attach these so the sandstorm console shows output from ZNC.
@@ -31,6 +33,16 @@ func startZnc() {
 	log.Println("ZNC is up.")
 }
 
+// Start ZNC, listen for connections from ZNC on `ipNetworkAddr`, and proxy
+// them using sandstorm's ipNetwork.
+//
+// configs is used to receive updates to which endpoint to connect to.
+//
+// netCaps is used to receive the lastest ipNetwork capability that should
+// be used to make the connection.
+//
+// ZNC will not be started until at least one receive has succeded on both
+// netCaps and configs.
 func ipNetworkProxy(
 	ctx context.Context,
 	netCaps <-chan *ip_capnp.IpNetwork,
@@ -81,6 +93,7 @@ func ipNetworkProxy(
 	}
 }
 
+// Accept connections from ipNetworkAddr, and send them on 'conns'.
 func ipNetworkListener(conns chan<- net.Conn) {
 	l, err := net.Listen("tcp", ipNetworkAddr)
 	chkfatal(err)

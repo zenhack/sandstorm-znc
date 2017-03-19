@@ -15,10 +15,12 @@ var (
 	zncConfTpl = txtTpl.Must(txtTpl.ParseFiles("/opt/app/znc.conf"))
 )
 
+// Paratmeters for the znc configuration file.
 type ZncConfig struct {
 	ListenPort, DialPort string
 }
 
+// Write the znc config to the appropriate location.
 func writeConfig(cfg *ZncConfig) {
 	configDir := os.Getenv("HOME") + "/.znc/configs"
 	chkfatal(os.MkdirAll(configDir, 0700))

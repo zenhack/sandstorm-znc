@@ -12,6 +12,7 @@ const (
 )
 
 var (
+	// These are set in sandstorm-pkgdef.capnp.
 	zncPort       = os.Getenv("SANDSTORM_ZNC_PORT")
 	ipNetworkPort = os.Getenv("SANDSTORM_IP_NETWORK_PORT")
 	appDir        = os.Getenv("SANDSTORM_APP_DIR")
@@ -27,6 +28,7 @@ type ServerConfig struct {
 	TLS  bool   // Whether to connect via TLS
 }
 
+// coordChans allows communication with the coordinator; see startCoodinator.
 type coordChans struct {
 	getConfig  <-chan *ServerConfig
 	setConfig  chan<- *ServerConfig
@@ -34,6 +36,16 @@ type coordChans struct {
 	setNetwork chan<- *ip_capnp.IpNetwork
 }
 
+// Starts a coordinator goroutine. This is used to coordinate the updating of
+// the current ServerConfig and ipNetwork capability to use.
+//
+// Whenever the config is updated, it will be sent on notifyConfig.
+//
+// Whenever the ipNetwork capability is updated, it will be sent on
+// notifyNetwork.
+//
+// The above sends must complete before the coordinator will service
+// any more requests.
 func startCoordinator(
 	ctx context.Context,
 	notifyConfig chan<- *ServerConfig,

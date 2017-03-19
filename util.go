@@ -5,12 +5,15 @@ import (
 	"net"
 )
 
+// panic if err is not nil.
 func chkfatal(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
+// Copy data both ways between a and b until one
+// of them is closed, then make sure both are closed.
 func copyClose(a, b net.Conn) {
 	done := make(chan struct{})
 	oneWay := func(dst, src net.Conn) {

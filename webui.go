@@ -21,11 +21,16 @@ var (
 	templates = template.Must(template.ParseGlob(appDir + "/templates/*"))
 )
 
+// Status information; passed to templates to report to clients.
 type Status struct {
-	HaveNetwork bool
+	HaveNetwork bool // whether we have an ipNetwork capability.
 	Server      *ServerConfig
 }
 
+// Create the webui.
+//
+// netCaps and serverConfigs will be used to communicate changes to the ipNetwork
+// cap and server config to the backend.
 func webui(ctx context.Context,
 	netCaps chan<- *ip_capnp.IpNetwork,
 	serverConfigs chan<- *ServerConfig,
