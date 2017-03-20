@@ -1,6 +1,12 @@
 
 iframe {
 	width: 100%;
-	height: 1.5rem;
+	height: 2rem;
 	border: none;
 }
+
+/* Align inputs inputs and labels */
+form { display: table; }
+form > div { display: table-row; }
+form label { display: table-cell; }
+form input { display: table-cell; }
