@@ -42,5 +42,15 @@ set up a new network:
 
 ...and then pointing your IRC client at localhost port 6000.
 
+You'll need to use sandstorm/sandstorm as your username and password
+when connecting. You can (and should) change your nick once connected
+by the usual means (/nick in most clients). You can use ZNC's
+[controlpanel][3] module to tweak settings; do `/msg *controlpanel help`
+for instructions.
+
+Note that settings are not persisted, so if the grain is restarted
+you'll have to reconfigure.
+
 [1]: https://sandstorm.io
 [2]: https://github.com/zenhack/websocket-proxy
+[3]: http://wiki.znc.in/Controlpanel
