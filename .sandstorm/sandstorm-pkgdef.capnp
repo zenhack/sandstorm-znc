@@ -47,18 +47,14 @@ const pkgdef :Spk.PackageDefinition = (
       # and (in deeper detail) in the sandstorm source code, in the Metadata section of
       # https://github.com/sandstorm-io/sandstorm/blob/master/src/sandstorm/package.capnp
       icons = (
-        # This is just the favicon from wiki.znc.in, converted to a png.
-        # XXX: The image is 32x32, but the schema comments say it should be
-        # 24x24. Being bigger is probably fine though, and we may end up
-        # converting to svg anyway; see below.
+        # XXX: these images aren't the correct size. We ought to find better
+        # images.
+        # This is just the favicon from wiki.znc.in, converted to a png:
         grain = (png = (dpi1x = embed "icons/grain-32x32.png")),
+        # Logo at the top of the github readme:
+        appGrid = (png = (dpi1x = embed "icons/appGrid-118x63.png")),
 
-        # TODO: fill the rest of these in. I(zenhack) haven't found a
-        # larger logo image, but we can probably get inkscape to
-        # vectorize the above and then scale it up. For now, we're just using
-        # the same (small) icon as grain:
-
-        #appGrid = (svg = embed "path/to/appgrid-128x128.svg"),
+        # TODO: fill the rest of these in:
         #market = (svg = embed "path/to/market-150x150.svg"),
         #marketBig = (svg = embed "path/to/market-big-300x300.svg"),
       ),
