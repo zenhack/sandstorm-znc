@@ -47,21 +47,30 @@ const pkgdef :Spk.PackageDefinition = (
       # and (in deeper detail) in the sandstorm source code, in the Metadata section of
       # https://github.com/sandstorm-io/sandstorm/blob/master/src/sandstorm/package.capnp
       icons = (
-        # Various icons to represent the app in various contexts.
+        # This is just the favicon from wiki.znc.in, converted to a png.
+        # XXX: The image is 32x32, but the schema comments say it should be
+        # 24x24. Being bigger is probably fine though, and we may end up
+        # converting to svg anyway; see below.
+        grain = (png = (dpi1x = embed "icons/grain-32x32.png")),
+
+        # TODO: fill the rest of these in. I(zenhack) haven't found a
+        # larger logo image, but we can probably get inkscape to
+        # vectorize the above and then scale it up. For now, we're just using
+        # the same (small) icon as grain:
+
         #appGrid = (svg = embed "path/to/appgrid-128x128.svg"),
-        #grain = (svg = embed "path/to/grain-24x24.svg"),
         #market = (svg = embed "path/to/market-150x150.svg"),
         #marketBig = (svg = embed "path/to/market-big-300x300.svg"),
       ),
 
-      website = "http://example.com",
+      website = "https://github.com/zenhack/sandstorm-znc",
       # This should be the app's main website url.
 
-      codeUrl = "http://example.com",
+      codeUrl = "https://github.com/zenhack/sandstorm-znc",
       # URL of the app's source code repository, e.g. a GitHub URL.
       # Required if you specify a license requiring redistributing code, but optional otherwise.
 
-      license = (none = void),
+      license = (openSource = apache2),
       # The license this package is distributed under.  See
       # https://docs.sandstorm.io/en/latest/developing/publishing-apps/#license
 
@@ -78,7 +87,7 @@ const pkgdef :Spk.PackageDefinition = (
         # requests as well as app store administrator requests, so it is very important that this be a
         # valid address with someone paying attention to it.
 
-        #pgpSignature = embed "path/to/pgp-signature",
+        pgpSignature = embed "pgp-signature",
         # PGP signature attesting responsibility for the app ID. This is a binary-format detached
         # signature of the following ASCII message (not including the quotes, no newlines, and
         # replacing <app-id> with the standard base-32 text format of the app's ID):
@@ -92,14 +101,21 @@ const pkgdef :Spk.PackageDefinition = (
         # Further details including how to set up GPG and how to use keybase.io can be found
         # at https://docs.sandstorm.io/en/latest/developing/publishing-apps/#verify-your-identity
 
-        upstreamAuthor = "Example App Team",
+        # NOTE(zenhack): This is a little borderline; we're doing a bit more
+        # than just "packaging"; we have our own web dashboard etc. and getting
+        # znc to use ipNetwork and such isn't totally trivial. That said all of
+        # the core logic is from the ZNC folks. I'm going with the reasoning
+        # that ZNC is being used as a library for this app, so not specifying
+        # upstreamAuthor. But it's debatable.
+        #
+        #upstreamAuthor = "Example App Team",
         # Name of the original primary author of this app, if it is different from the person who
         # produced the Sandstorm package. Setting this implies that the author connected to the PGP
         # signature only "packaged" the app for Sandstorm, rather than developing the app.
         # Remove this line if you consider yourself as the author of the app.
       ),
 
-      #pgpKeyring = embed "path/to/pgp-keyring",
+      pgpKeyring = embed "pgp-keyring",
       # A keyring in GPG keyring format containing all public keys needed to verify PGP signatures in
       # this manifest (as of this writing, there is only one: `author.pgpSignature`).
       #
