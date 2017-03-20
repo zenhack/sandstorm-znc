@@ -7,3 +7,6 @@
 
 # vim swap files:
 *.swp
+
+# Sandstorm packages
+*.spk
