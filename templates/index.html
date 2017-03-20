@@ -46,10 +46,6 @@
 			</div>
 			<button type="submit">Apply</button>
 		</form>
-		{{ if .HaveNetwork -}}
-		<p>You can connect to ZNC via this websocket:</p>
-		<iframe id="offer-iframe"></iframe>
-		{{- end }}
 		<h1>Connecting</h1>
 
 		{{ if .HaveNetwork -}}
@@ -61,5 +57,10 @@
 		be able to connect to the IRC network until this has been obtained.</p>
 		{{ end -}}
 		<button id="request_cap">Request Network Access</button>
+
+		{{ if .HaveNetwork -}}
+		<p>You can connect to ZNC via this websocket:</p>
+		<iframe id="offer-iframe"></iframe>
+		{{- end }}
 	</body>
 </html>
