@@ -1,0 +1,136 @@
+{
+	"ImportPath": "zenhack.net/go/sandstorm-znc",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/glycerine/rbtree",
+			"Rev": "cd7940bb26b149ce2faf398e7c63fff01aa7b394"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "a6577fac2d73be281a500b310739095313165611"
+		},
+		{
+			"ImportPath": "golang.org/x/net/websocket",
+			"Rev": "a6577fac2d73be281a500b310739095313165611"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/capnp/activity",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/capnp/grain",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/capnp/identity",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/capnp/ip",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/capnp/powerbox",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/capnp/supervisor",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/capnp/util",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/capnp/websession",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/grain",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/internal/errors",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/ip",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/util",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zenhack.net/go/sandstorm/websession",
+			"Rev": "ebebfdc5a4881ca1afb8e466c479002413871e7d"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/encoding/text",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/internal/fulfiller",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/internal/nodemap",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/internal/packed",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/internal/queue",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/rpc",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/rpc/internal/refcount",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/schemas",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/server",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/std/capnp/persistent",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/std/capnp/rpc",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		},
+		{
+			"ImportPath": "zombiezen.com/go/capnproto2/std/capnp/schema",
+			"Comment": "v2.12.4-1-g02f1032",
+			"Rev": "02f10324cc25fc4acd262b854872e1e5bddb14f7"
+		}
+	]
+}
