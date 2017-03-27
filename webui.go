@@ -29,19 +29,14 @@ type Status struct {
 
 // Create the webui.
 //
-// netCaps and serverConfigs will be used to communicate changes to the ipNetwork
+// coord will be used to communicate changes to the ipNetwork
 // cap and server config to the backend.
-func webui(ctx context.Context,
-	netCaps chan<- *ip_capnp.IpNetwork,
-	serverConfigs chan<- *ServerConfig,
-) websession.HandlerWebSession {
+func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 
 	badReq := func(w http.ResponseWriter) {
 		w.WriteHeader(400)
 		w.Write([]byte("Bad Request"))
 	}
-
-	coord := startCoordinator(ctx, serverConfigs, netCaps)
 
 	mux := http.NewServeMux()
 

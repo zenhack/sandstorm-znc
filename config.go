@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"net"
 	"os"
 	ip_capnp "zenhack.net/go/sandstorm/capnp/ip"
@@ -19,6 +21,8 @@ var (
 
 	zncAddr       = net.JoinHostPort(lo, zncPort)
 	ipNetworkAddr = net.JoinHostPort(lo, ipNetworkPort)
+
+	serverConfigPath = "/var/ServerConfig.json"
 )
 
 // A ServerConfig specifies a server to connect to.
@@ -70,6 +74,19 @@ func startCoordinator(
 				notifyNetwork <- network
 			case config = <-setConfig:
 				notifyConfig <- config
+				file, err := os.Create(serverConfigPath)
+				if err != nil {
+					log.Printf("Failed to open %q for writing: %v",
+						serverConfigPath, err)
+					continue
+				}
+				err = json.NewEncoder(file).Encode(config)
+				file.Close()
+				if err != nil {
+					log.Printf("Failed to write ServerConfig to %q: %v",
+						serverConfigPath, err)
+					continue
+				}
 			}
 		}
 	}()

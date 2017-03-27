@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"os"
 	ip_capnp "zenhack.net/go/sandstorm/capnp/ip"
 	"zenhack.net/go/sandstorm/grain"
@@ -75,7 +77,27 @@ func main() {
 		file.Close()
 	}
 
-	api, err := grain.ConnectAPI(ctx, webui(ctx, netCaps, configs))
+	coord := startCoordinator(ctx, configs, netCaps)
+
+	// If we have an existing server config, load it.
+	file, err := os.Open(serverConfigPath)
+	if err == nil {
+		config := &ServerConfig{}
+		err = json.NewDecoder(file).Decode(config)
+		file.Close()
+		if err == nil {
+			log.Printf("Loaded saved config from %q.", serverConfigPath)
+			coord.setConfig <- config
+		} else {
+			log.Printf("Failed decoding ServerConfig from %q: %v",
+				serverConfigPath, err)
+		}
+	} else {
+		log.Printf("Failed to load ServerConfig from %q: %v. Note that "+
+			"this is normal on first startup.", serverConfigPath, err)
+	}
+
+	api, err := grain.ConnectAPI(ctx, webui(ctx, coord))
 	chkfatal(err)
 	api.StayAwake(ctx, nil).Handle()
 
