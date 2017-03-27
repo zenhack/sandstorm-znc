@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"log"
 	"os"
+	grain_capnp "zenhack.net/go/sandstorm/capnp/grain"
 	ip_capnp "zenhack.net/go/sandstorm/capnp/ip"
 	"zenhack.net/go/sandstorm/grain"
 	// We import this under a different name, since we use
@@ -77,28 +76,22 @@ func main() {
 		file.Close()
 	}
 
-	coord := startCoordinator(ctx, configs, netCaps)
-
-	// If we have an existing server config, load it.
-	file, err := os.Open(serverConfigPath)
-	if err == nil {
-		config := &ServerConfig{}
-		err = json.NewDecoder(file).Decode(config)
-		file.Close()
-		if err == nil {
-			log.Printf("Loaded saved config from %q.", serverConfigPath)
-			coord.setConfig <- config
-		} else {
-			log.Printf("Failed decoding ServerConfig from %q: %v",
-				serverConfigPath, err)
-		}
-	} else {
-		log.Printf("Failed to load ServerConfig from %q: %v. Note that "+
-			"this is normal on first startup.", serverConfigPath, err)
-	}
+	setApi := make(chan grain_capnp.SandstormApi)
+	coord := startCoordinator(ctx, setApi, configs, netCaps)
 
 	api, err := grain.ConnectAPI(ctx, webui(ctx, coord))
 	chkfatal(err)
+	setApi <- api
+
+	// Try to restore the ServerConfig and ipNetowrk caps, if we have
+	// them.
+	if config, err := loadServerConfig(); err == nil {
+		coord.setConfig <- config
+	}
+	if ipNetwork, err := loadIpNetwork(ctx, api); err == nil {
+		coord.setNetwork <- ipNetwork
+	}
+
 	api.StayAwake(ctx, nil).Handle()
 
 	<-ctx.Done()

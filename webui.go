@@ -11,10 +11,8 @@ import (
 	"net/http"
 	"strconv"
 	grain_capnp "zenhack.net/go/sandstorm/capnp/grain"
-	ip_capnp "zenhack.net/go/sandstorm/capnp/ip"
 	"zenhack.net/go/sandstorm/grain"
 	"zenhack.net/go/sandstorm/websession"
-	"zombiezen.com/go/capnproto2"
 )
 
 var (
@@ -109,7 +107,7 @@ func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 			log.Printf("error claiming network cap: %v", err)
 			return
 		}
-		coord.setNetwork <- &ip_capnp.IpNetwork{capnp.ToInterface(cap).Client()}
+		coord.setNetwork <- cap
 	})
 
 	mux.Handle("/static/", http.FileServer(http.Dir(appDir)))
