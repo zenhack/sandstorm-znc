@@ -90,6 +90,8 @@ func startCoordinator(
 			case getConfig <- config:
 			case getNetwork <- network:
 			case cap := <-setNetwork:
+				// FIXME: We should only save this if we've never done so
+				// before; it may be something we just restored.
 				if err := saveIpNetwork(ctx, api, cap); err != nil {
 					log.Println("Failed to persist ipNetwork cap.")
 				}
