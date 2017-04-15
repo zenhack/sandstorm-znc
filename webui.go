@@ -75,7 +75,20 @@ func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 	mux.Handle("/connect", websocket.Handler(func(wsConn *websocket.Conn) {
 		zncConn, err := net.Dial("tcp", zncAddr)
 		if err != nil {
-			zncConn.Close()
+			// TODO: we should handle this case more gracefully; it can
+			// easily happen if e.g. the grain has been shut down and is
+			// woken by a request from the IRC client (rather than the
+			// web ui). Possible improvements:
+			//
+			// * Easy: write a NOTICE message to the client, telling
+			//   them what happened.
+			// * Better: make sure ZNC is up before we start
+			//   accepting connections. Reject websocket connections
+			//   with a NOTICE if we can't start ZNC due to missing
+			//   server config/network cap.
+			//
+			// The latter will take a bit more work, but is probably
+			// worth it.
 			log.Printf("Error connecting to ZNC: %v", err)
 			return
 		}
