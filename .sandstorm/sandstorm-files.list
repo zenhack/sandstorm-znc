@@ -61,8 +61,6 @@ opt/app/templates
 opt/app/templates/index.html
 opt/app/znc.conf
 proc/cpuinfo
-sandstorm-http-bridge
-sandstorm-http-bridge-config
 sandstorm-manifest
 usr/bin/find
 usr/bin/znc
