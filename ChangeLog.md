@@ -14,3 +14,4 @@
   client.
 * Remove some unnecessary data from the package; this reduces the
   package size by about 2 MiB.
+* Add a clipboard button for the websocket URLs.
