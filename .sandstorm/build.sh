@@ -23,6 +23,9 @@ cd /opt/app
 
 export GOPATH=$HOME/go
 go get -d ./...
-go build -v -i
+go build -v -i -o app
+strip app -o app.stripped
+objcopy --only-keep-debug app app.debug
+objcopy --add-gnu-debuglink=app.debug app.stripped
 
 exit 0

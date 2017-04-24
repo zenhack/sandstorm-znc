@@ -1,6 +1,12 @@
 # The executable, as built by vagrant-spk:
 /app
 
+# Stripped executable
+/app.stripped
+
+# debug info
+/app.debug
+
 # If a developer builds the executable outside of vagrant, it is likely to be
 # named thus:
 /sandstorm-znc

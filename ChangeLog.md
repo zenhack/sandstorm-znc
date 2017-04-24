@@ -13,5 +13,5 @@
 * Fixed a crash that could occur if the grain is woken by a connecting
   client.
 * Removed some unnecessary data from the package; this reduces the
-  package size by about 2 MiB.
+  package size by about 3 MiB.
 * Added a clipboard button for the websocket URLs.
