@@ -73,6 +73,7 @@ func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 
 	// Websocket connection, to be forwarded to ZNC:
 	mux.Handle("/connect", websocket.Handler(func(wsConn *websocket.Conn) {
+		log.Print("Got websocket connection from client.")
 		zncConn, err := net.Dial("tcp", zncAddr)
 		if err != nil {
 			// TODO: we should handle this case more gracefully; it can
@@ -93,6 +94,7 @@ func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 			return
 		}
 		copyClose(zncConn, wsConn)
+		log.Print("Client disconnected from websocket.")
 	}))
 
 	// An IpNetwork capability; send it off to the backend so it can access
