@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"io"
 	"net"
 )
@@ -12,17 +13,18 @@ func chkfatal(err error) {
 	}
 }
 
-// Copy data both ways between a and b until one
-// of them is closed, then make sure both are closed.
-func copyClose(a, b net.Conn) {
+// Copy data both ways between a and b until one of them is closed,
+// or the context is cancelled, then make sure both are closed.
+func copyClose(ctx context.Context, a, b net.Conn) {
+	defer a.Close()
+	defer b.Close()
+	ctx, cancel := context.WithCancel(ctx)
 	done := make(chan struct{})
 	oneWay := func(dst, src net.Conn) {
 		io.Copy(dst, src)
-		dst.Close()
-		done <- struct{}{}
+		cancel()
 	}
 	go oneWay(a, b)
 	go oneWay(b, a)
-	<-done
-	<-done
+	<-ctx.Done()
 }

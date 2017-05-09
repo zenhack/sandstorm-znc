@@ -74,15 +74,14 @@ func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 	// Websocket connection, to be forwarded to ZNC:
 	mux.Handle("/connect", websocket.Handler(func(wsConn *websocket.Conn) {
 		log.Print("Got websocket connection from client.")
-		zncConn, err := net.Dial("tcp", zncAddr)
+		dialCtx, _ := context.WithTimeout(time.Second * 5)
+		zncConn, err := net.DialContext(dialCtx, "tcp", zncAddr)
 		if err != nil {
 			// TODO: we should handle this case more gracefully; it can
 			// easily happen if e.g. the grain has been shut down and is
 			// woken by a request from the IRC client (rather than the
 			// web ui). Possible improvements:
 			//
-			// * Easy: write a NOTICE message to the client, telling
-			//   them what happened.
 			// * Better: make sure ZNC is up before we start
 			//   accepting connections. Reject websocket connections
 			//   with a NOTICE if we can't start ZNC due to missing
@@ -90,10 +89,11 @@ func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 			//
 			// The latter will take a bit more work, but is probably
 			// worth it.
+			fmt.Fprintf(wsConn, ":sandstormznc NOTICE :Error connecting to ZNC: %v", err)
 			log.Printf("Error connecting to ZNC: %v", err)
 			return
 		}
-		copyClose(zncConn, wsConn)
+		copyClose(context.TODO(), zncConn, wsConn)
 		log.Print("Client disconnected from websocket.")
 	}))
 

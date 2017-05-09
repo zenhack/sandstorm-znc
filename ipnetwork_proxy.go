@@ -48,7 +48,6 @@ func ipNetworkProxy(
 	netCaps <-chan *ip_capnp.IpNetwork,
 	configs <-chan *ServerConfig,
 ) {
-
 	var (
 		config *ServerConfig
 		cap    *ip_capnp.IpNetwork
@@ -58,18 +57,27 @@ func ipNetworkProxy(
 		select {
 		case cap = <-netCaps:
 		case config = <-configs:
+		case <-ctx.Done():
+			return
 		}
 	}
 
+	connCtx, cancelConns := context.WithCancel(ctx)
+
 	conns := make(chan net.Conn)
-	go ipNetworkListener(conns)
+	go ipNetworkListener(ctx, conns)
 
 	startZnc()
 
 	for {
 		select {
+		case <-ctx.Done():
+			return
 		case config = <-configs:
+			fallthrough
 		case cap = <-netCaps:
+			cancelConns()
+			connCtx, cancelConns = context.WithCancel(ctx)
 		case zncConn := <-conns:
 			log.Printf("Got connection from znc")
 			var dialer Dialer
@@ -92,20 +100,28 @@ func ipNetworkProxy(
 				zncConn.Close()
 				continue
 			}
-			go copyClose(serverConn, zncConn)
+			go copyClose(connCtx, serverConn, zncConn)
 		}
 	}
 }
 
 // Accept connections from ipNetworkAddr, and send them on 'conns'.
-func ipNetworkListener(conns chan<- net.Conn) {
+func ipNetworkListener(ctx context.Context, conns chan<- net.Conn) {
 	l, err := net.Listen("tcp", ipNetworkAddr)
 	chkfatal(err)
+	go func() {
+		<-ctx.Done()
+		l.Close()
+	}()
 	for {
 		conn, err := l.Accept()
 		if err != nil {
 			log.Printf("Error in Accept(): %v")
 		}
-		conns <- conn
+		select {
+		case conns <- conn:
+		case <-ctx.Done():
+			return
+		}
 	}
 }
