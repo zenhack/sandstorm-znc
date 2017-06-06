@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"strconv"
 	grain_capnp "zenhack.net/go/sandstorm/capnp/grain"
-	"zenhack.net/go/sandstorm/grain"
+	grain_ctx "zenhack.net/go/sandstorm/grain/context"
 	"zenhack.net/go/sandstorm/websession"
 )
 
@@ -29,7 +29,7 @@ type Status struct {
 //
 // coord will be used to communicate changes to the ipNetwork
 // cap and server config to the backend.
-func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
+func webui(ctx context.Context, coord coordChans) websession.HandlerUiView {
 
 	badReq := func(w http.ResponseWriter) {
 		w.WriteHeader(400)
@@ -106,7 +106,7 @@ func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 			return
 		}
 
-		sessionCtx := w.(grain.HasSessionContext).GetSessionContext()
+		sessionCtx := grain_ctx.GetSessionContext(req.Context())
 		results, err := sessionCtx.ClaimRequest(
 			ctx,
 			func(p grain_capnp.SessionContext_claimRequest_Params) error {
@@ -127,5 +127,5 @@ func webui(ctx context.Context, coord coordChans) websession.HandlerWebSession {
 
 	mux.Handle("/static/", http.FileServer(http.Dir(appDir)))
 
-	return websession.FromHandler(ctx, mux)
+	return websession.FromHandler(mux)
 }

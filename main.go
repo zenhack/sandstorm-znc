@@ -79,7 +79,7 @@ func main() {
 	setApi := make(chan grain_capnp.SandstormApi)
 	coord := startCoordinator(ctx, setApi, configs, netCaps)
 
-	api, err := grain.ConnectAPI(ctx, webui(ctx, coord))
+	api, err := grain.ConnectAPI(ctx, grain_capnp.UiView_ServerToClient(webui(ctx, coord)))
 	chkfatal(err)
 	setApi <- api
 
